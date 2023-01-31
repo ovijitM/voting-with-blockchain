@@ -1,21 +1,40 @@
-MIT License
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
 
-Copyright (c) 2023 ovijitM
+contract voting{
+    mapping(address=>bool) public voted;
+    uint public p1vote;
+    uint public p2vote;
+    uint public p3vote;
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    modifier samecode(){
+        require(!voted[msg.sender],"you already voted");
+        voted[msg.sender]=true;
+        _;
+    }
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+    function p1() public samecode{
+        p1vote+=1;
+    }
+    function p2() public samecode{
+        p2vote+=1;
+    }
+    function p3() public samecode{
+        p3vote+=1;
+    }
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    function winner() public view returns(string memory){
+        uint maxvotetake=p1vote;
+        if(maxvotetake>p2vote){
+            p1vote==maxvotetake;
+            return "p1 is winner";
+        }
+        if (maxvotetake>p3vote){
+            maxvotetake=p2vote;
+            return "p2 is winner";
+        }
+        else return "p3 is winner";
+        
+    }
+
+}
