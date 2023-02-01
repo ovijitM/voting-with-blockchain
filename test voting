@@ -1,0 +1,75 @@
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+contract Authority{
+    uint public p1vote;
+    uint public p2vote;
+    uint public p3vote;
+
+    mapping(address=>bool) internal authorityvote;
+
+    modifier samecode1(){
+        require(!authorityvote[msg.sender],"you already voted");
+        authorityvote[msg.sender]=true;
+        _;
+    }
+
+    function incrementP1Vote() external  samecode1{
+        p1vote++;
+    }
+
+    function incrementP2Vote() external  samecode1{
+        p2vote++;
+    }
+
+    function incrementP3Vote() external samecode1{
+        p3vote++;
+    }
+
+    function winner() public view returns(string memory){
+        uint maxvotetake=p1vote;
+        if(maxvotetake>p2vote){
+            maxvotetake=p1vote;
+            return "p1 is winner";
+        }
+        if (maxvotetake>p3vote){
+            maxvotetake=p2vote;
+            return "p2 is winner";
+        }
+        if (p1vote==p2vote && p2vote==p3vote){
+            return "all participents get equal vote";}
+        else return "p3 is winner";
+        
+    }
+}
+
+contract Voter{
+    address deployer;
+
+    Authority authority;
+
+    constructor(address _authority){
+        deployer = msg.sender;
+        authority=Authority(_authority);
+    }
+
+    mapping(address=>bool) public voted;
+
+    modifier samecode(){
+        require(!voted[msg.sender],"you already voted");
+        voted[msg.sender]=true;
+        _;
+    }
+
+    function p1() public samecode {
+        authority.incrementP1Vote();
+    }
+    function p2() public samecode{
+        authority.incrementP2Vote();
+    }
+    function p3() public samecode{
+        authority.incrementP3Vote();
+    }
+
+}
